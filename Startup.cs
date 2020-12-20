@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AutoMapper;
 using csharp_rpg.Services.CharacterService;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -30,6 +31,7 @@ namespace csharp_rpg
 
          services.AddControllers();
          services.AddScoped<ICharacterService, CharacterService>();
+         services.AddAutoMapper(typeof(Startup));
          // services.AddSwaggerGen(c =>
          // {
          //     c.SwaggerDoc("v1", new OpenApiInfo { Title = "csharp_rpg", Version = "v1" });

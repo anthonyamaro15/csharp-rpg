@@ -1,5 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using AutoMapper;
+using csharp_rpg.Dtos.Character;
 using csharp_rpg.Models;
 
 namespace csharp_rpg.Services.CharacterService
@@ -12,20 +15,35 @@ namespace csharp_rpg.Services.CharacterService
          new Character { Id = 1, Name = "Sam"}
       };
 
-      public List<Character> AddCharacter(Character newCharacter)
+      private readonly IMapper _mapper;
+
+      public CharacterService(IMapper mapper)
       {
-         characters.Add(newCharacter);
-         return characters;
+         _mapper = mapper;
       }
 
-      public List<Character> GetAllCharacters()
+      public async Task<ServiceResponse<List<GetCharacterDto>>> AddCharacter(AddCharacterDto newCharacter)
       {
-         return characters;
+         ServiceResponse<List<GetCharacterDto>> serviceResponse = new ServiceResponse<List<GetCharacterDto>>();
+         Character character = _mapper.Map<Character>(newCharacter);
+         character.Id = characters.Max(c => c.Id) + 1;
+         characters.Add(character);
+         serviceResponse.Data = (characters.Select(c => _mapper.Map<GetCharacterDto>(c))).ToList();
+         return serviceResponse;
       }
 
-      public Character GetCharacterById(int id)
+      public async Task<ServiceResponse<List<GetCharacterDto>>> GetAllCharacters()
       {
-         return characters.FirstOrDefault(c => c.Id == id);
+         ServiceResponse<List<GetCharacterDto>> serviceResponse = new ServiceResponse<List<GetCharacterDto>>();
+         serviceResponse.Data = (characters.Select(c => _mapper.Map<GetCharacterDto>(c))).ToList();
+         return serviceResponse;
+      }
+
+      public async Task<ServiceResponse<GetCharacterDto>> GetCharacterById(int id)
+      {
+         ServiceResponse<GetCharacterDto> serviceResponse = new ServiceResponse<GetCharacterDto>();
+         serviceResponse.Data = _mapper.Map<GetCharacterDto>(characters.FirstOrDefault(c => c.Id == id));
+         return serviceResponse;
       }
    }
 }
